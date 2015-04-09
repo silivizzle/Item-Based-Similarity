@@ -21,7 +21,15 @@ public class ValuePair {
 	public void setRating(double[] ratings) {
 		this.rating = ratings;
 	}
-
 	
+	public double getFirstRating(){
+		int index = 0;
+		return rating[index];
+	}
+	
+	public double getSecondRating(){
+		int index = 1;
+		return rating[index];
+	}
 	
 }
