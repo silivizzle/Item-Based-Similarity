@@ -17,10 +17,7 @@ public class SimilarityReducer extends
 		String[] ratingsArr = null;
 		Text similarity = new Text();
 		int count = 0;
-		double numerator = 0.0;
-		double denominator1 = 0.0;
-		double denominator2 = 0.0;
-		double answer = 0.0;
+		double numerator = 0.0, denominator1 = 0.0, denominator2 = 0.0, answer = 0.0;
 		List<ValuePair> pairs = new ArrayList<ValuePair>();
 		
 		//calculate the averages
@@ -48,20 +45,22 @@ public class SimilarityReducer extends
 		average1 = average1 / count;
 		average2 = average2 / count;
 		
-		//calculate 
-		for(int i=0; i < pairs.size(); i++){
-			double ratings[] = new double[2];
-			ValuePair pair = new ValuePair();
-			pair = pairs.get(i);
-			ratings = pair.getRating().clone();
-			numerator += (ratings[0] - average1) * (ratings[1] - average2);
-			denominator1 += Math.pow((ratings[0] - average1), 2);
-			denominator2 += Math.pow((ratings[1] - average2), 2);
-		}		
-
-		answer = numerator / ((Math.sqrt(denominator1)) * (Math.sqrt(denominator2)));		
-		similarity.set(String.valueOf(answer));		
-		context.write(key, similarity);	
+		//Set condition to calculate only if more than one item to item comparison
+		if(pairs.size() > 1){
+		
+			//calculate 
+			for(int i=0; i < pairs.size(); i++){
+				ValuePair pair = new ValuePair();
+				pair = pairs.get(i);
+				numerator += (pair.getFirstRating() - average1) * (pair.getSecondRating() - average2);
+				denominator1 += Math.pow((pair.getFirstRating() - average1), 2);
+				denominator2 += Math.pow((pair.getSecondRating() - average2), 2);
+			}		
+	
+			answer = numerator / ((Math.sqrt(denominator1)) * (Math.sqrt(denominator2)));		
+			similarity.set(String.valueOf(answer));		
+			context.write(key, similarity);
+		}
 	
 	}
 
